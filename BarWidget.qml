@@ -11,6 +11,37 @@ BarWidget {
   property var service: null
   readonly property bool featureEnabled: root.service ? root.service.dragEnabled === true : false
 
+  readonly property bool opened: panelLoader.item
+    ? panelLoader.item.opened === true
+    : false
+  readonly property bool popoutSwitchClosing: panelLoader.item
+    ? panelLoader.item.popoutSwitchClosing === true
+    : false
+
+  function open() {
+    if (panelLoader.item) panelLoader.item.open()
+  }
+
+  function close() {
+    if (panelLoader.item) panelLoader.item.close()
+  }
+
+  function toggle() {
+    if (panelLoader.item) panelLoader.item.toggle()
+  }
+
+  function closeForPopoutSwitch() {
+    if (panelLoader.item) panelLoader.item.closeForPopoutSwitch()
+  }
+
+  function injectPanel() {
+    if (!panelLoader.item) return
+    panelLoader.item.bar = root.bar
+    panelLoader.item.anchorItem = button
+    panelLoader.item.hostWidget = root
+    panelLoader.item.service = root.service
+  }
+
   function resolveService() {
     if (root.service) return
     var shell = root.bar ? root.bar.shell : null
@@ -18,7 +49,11 @@ BarWidget {
       ? shell.serviceFor(root.moduleName) : null
   }
 
-  onBarChanged: resolveService()
+  onBarChanged: {
+    resolveService()
+    injectPanel()
+  }
+  onServiceChanged: injectPanel()
   Component.onCompleted: resolveService()
 
   Timer {
@@ -31,6 +66,17 @@ BarWidget {
   implicitWidth: button.implicitWidth
   implicitHeight: button.implicitHeight
 
+  Loader {
+    id: panelLoader
+    active: true
+    source: Qt.resolvedUrl("Panel.qml")
+    visible: false
+    onLoaded: {
+      root.injectPanel()
+      Qt.callLater(root.injectPanel)
+    }
+  }
+
   BarIconButton {
     id: button
     anchors.fill: parent
@@ -38,13 +84,17 @@ BarWidget {
     // nf-md-mouse / nf-md-mouse_off
     text: root.featureEnabled ? "\u{F037D}" : "\u{F037E}"
     slotSize: Style.bar.statusSlot
-    active: root.featureEnabled
+    active: root.featureEnabled || root.opened
     useActiveColor: true
     tooltipText: root.featureEnabled
-      ? "Floaterr on: hold middle mouse to move windows (click to disable)"
-      : "Floaterr off (click to enable)"
+      ? "Floaterr on: click for options, right-click to disable"
+      : "Floaterr off: click for options, right-click to enable"
     onPressed: function(buttonCode) {
-      if (buttonCode === Qt.LeftButton && root.service) root.service.toggle()
+      if (buttonCode === Qt.RightButton) {
+        if (root.service) root.service.toggle()
+      } else if (buttonCode === Qt.LeftButton) {
+        root.toggle()
+      }
     }
   }
 }

@@ -1,6 +1,6 @@
 # Floaterr
 
-Move any window by **holding the middle mouse button and dragging**. You don't need to hold Super. A mouse icon in the Omarchy bar turns the feature on and off with one click.
+Move any window by **holding the middle mouse button and dragging**. You don't need to hold Super. A mouse icon in the Omarchy bar opens a small panel to turn the feature on or off. Right-click the icon to toggle it instantly.
 
 [![Floaterr](preview.jpeg)](preview.mp4)
 
@@ -9,9 +9,15 @@ Move any window by **holding the middle mouse button and dragging**. You don't n
 ## Features
 
 - **Middle-Button Window Dragging**: Hold the middle mouse button over a window and drag to move it, the same move Omarchy gives you with `Super` + left-drag.
-- **One-Click Bar Toggle**:
+- **Bar Icon**:
   - **Highlighted mouse** (`󰍽`): Floaterr is on. Middle-button dragging moves windows.
   - **Crossed-out mouse** (`󰍾`): Floaterr is off. Middle-click goes to your apps as usual (paste, open link in new tab, close tab).
+  - **Left-click** opens the Floaterr panel. **Right-click** toggles Floaterr on or off directly.
+- **Dropdown Panel**:
+  - **Status Hero**: A large mouse icon showing whether middle-drag is on or off.
+  - **On / Off Tiles**: Pick a state with one click. The active tile is highlighted.
+  - **Quick Action**: *Re-apply Hyprland bind* restores the bind if something removed it.
+  - **Keyboard Friendly**: Arrow keys or `h`/`j`/`k`/`l` move between items, `Enter`/`Space` activates, `Esc` closes.
 - **Remembers Your Choice**: The on/off state is saved and restored after shell restarts, plugin reloads, and reboots.
 - **Survives Hyprland Reloads**: The bind is re-applied automatically after every Hyprland config reload.
 - **Multi-Monitor Aware**: One shared state drives the icon on every monitor's bar, so they never disagree.
@@ -83,11 +89,15 @@ omarchy shell floaterr disable
 
 # Print the current state: "enabled" or "disabled"
 omarchy shell floaterr status
+
+# Open / close the Floaterr panel
+omarchy-shell shell summon io.github.35c0b4r.floaterr '{}'
+omarchy-shell shell hide io.github.35c0b4r.floaterr
 ```
 
 ## Settings
 
-Floaterr needs no configuration. Its only setting is on/off, controlled from the bar icon or the IPC commands above.
+Floaterr needs no configuration. Its only setting is on/off, controlled from the bar icon, the panel, or the IPC commands above.
 
 | Item | Value |
 |---|---|
@@ -99,6 +109,7 @@ Floaterr needs no configuration. Its only setting is on/off, controlled from the
 ## How It Works
 
 - A headless **service** owns the state and the bind. The bar draws one widget per monitor, so the state can't live in the widget itself. Each widget reads it from the service.
+- The bar widget hosts a dropdown **panel** (`Panel.qml`) that reads and changes the same service state.
 - When the feature is on, the service runs
   `hyprctl eval 'hl.bind("mouse:274", hl.dsp.window.drag(), { mouse = true })'`.
   When it is off, the service runs `hl.unbind("mouse:274")`. Nothing in your Hyprland config files is changed.
