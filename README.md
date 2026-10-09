@@ -1,4 +1,4 @@
-# Floaterr for Omarchy
+# Floaterr
 
 Move any window by **holding the middle mouse button and dragging**. You don't need to hold Super. A mouse icon in the Omarchy bar turns the feature on and off with one click.
 
