@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "35c0b4r.floaterr",
+  "name": "Floaterr",
+  "version": "1.0.0",
+  "author": "35c0b4r",
+  "license": "MIT",
+  "description": "Move windows by holding the middle mouse button and dragging. Toggle it from the bar.",
+  "repository": "https://github.com/35c0b4r/floaterr",
+  "homepage": "https://github.com/35c0b4r/floaterr",
+  "kinds": [
+    "service",
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "service": "Service.qml",
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "Floaterr",
+    "description": "Toggle moving windows with the middle mouse button",
+    "category": "System",
+    "allowMultiple": false,
+    "defaultSection": "right"
+  }
+}
